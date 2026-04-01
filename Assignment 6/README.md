@@ -33,7 +33,6 @@ C++ provides the `<fstream>` header for file operations:
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <vector>
 using namespace std;
 
 class Student {
@@ -53,57 +52,65 @@ public:
     }
 };
 
-// Write student records to a text file
-void writeToFile(const string& filename, const vector<Student>& students) {
+// Write student records to file
+void writeToFile(const string& filename, Student students[], int size) {
     ofstream outFile(filename);
     if (!outFile) {
         cout << "Error opening file for writing!" << endl;
         return;
     }
-    for (const Student& s : students) {
-        outFile << s.rollNo << " " << s.name << " " << s.marks << "\n";
+
+    for (int i = 0; i < size; i++) {
+        outFile << students[i].rollNo << " "
+                << students[i].name << " "
+                << students[i].marks << "\n";
     }
+
     outFile.close();
-    cout << "Data written to " << filename << " successfully." << endl;
+    cout << "Data written successfully.\n";
 }
 
-// Read student records from a text file into objects
-vector<Student> readFromFile(const string& filename) {
-    vector<Student> students;
+// Read student records from file
+int readFromFile(const string& filename, Student students[]) {
     ifstream inFile(filename);
     if (!inFile) {
         cout << "Error opening file for reading!" << endl;
-        return students;
+        return 0;
     }
-    int r;
-    string n;
-    float m;
-    while (inFile >> r >> n >> m) {
-        students.push_back(Student(r, n, m));
+
+    int count = 0;
+    while (inFile >> students[count].rollNo
+                  >> students[count].name
+                  >> students[count].marks) {
+        count++;
     }
+
     inFile.close();
-    return students;
+    return count;
 }
 
 int main() {
-    // Create student objects
-    vector<Student> students = {
-        Student(1, "Alice", 88.5),
-        Student(2, "Bob", 76.0),
-        Student(3, "Charlie", 92.3),
-        Student(4, "Diana", 81.0)
-    };
+    Student students[10];  // Array (max 10 students)
 
+    // Initialize data
+    students[0] = Student(1, "Alice", 88.5);
+    students[1] = Student(2, "Bob", 76.0);
+    students[2] = Student(3, "Charlie", 92.3);
+    students[3] = Student(4, "Diana", 81.0);
+
+    int size = 4;
     string filename = "students.txt";
 
     // Write to file
-    writeToFile(filename, students);
+    writeToFile(filename, students, size);
 
-    // Read back from file
-    cout << "\nReading student data from file:" << endl;
-    vector<Student> loaded = readFromFile(filename);
-    for (const Student& s : loaded) {
-        s.display();
+    // Read from file
+    Student loaded[10];
+    int count = readFromFile(filename, loaded);
+
+    cout << "\nReading student data:\n";
+    for (int i = 0; i < count; i++) {
+        loaded[i].display();
     }
 
     return 0;
