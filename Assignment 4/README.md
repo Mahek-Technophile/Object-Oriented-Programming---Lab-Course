@@ -113,7 +113,41 @@ int main() {
     return 0;
 }
 ```
+## Operator Overloading 
 
+```cpp
+ #include <iostream>
+ using namespace std;
+
+ class Number (
+ public:
+ int value;
+
+
+Number(int v) {
+value = v;
+}
+
+void operator++() {
+
+value value + 3;
+
+
+};
+
+ int main() {
+ Number n(5);
+
+
+++n;
+
+
+cout << n.value;
+
+
+return 0;
+}
+```
 ---
 
 ## Sample Output
