@@ -28,56 +28,71 @@ becomes **abstract** — it cannot be instantiated directly.
 ## Code
 
 ```cpp
-#include<iostream>
+#include <iostream>
 using namespace std;
 
-// Abstract Base Class
+// Abstract base class
 class Shape {
 public:
-    // Pure Virtual Function
-    virtual void getArea() = 0; 
+    virtual void draw() = 0;   // pure virtual function
+
+    virtual ~Shape() {}
 };
 
 class Circle : public Shape {
+private:
+    float radius;
+
 public:
-    void getArea() {
-        int r;
-        cout << "Enter circle radius: ";
-        cin >> r;
-        cout << "Area of circle is: " << (3.14 * r * r) << endl;
+    Circle(float r) : radius(r) {}
+
+    void draw() override {
+        cout << "Drawing Circle with radius = " << radius << endl;
     }
 };
 
 class Rectangle : public Shape {
+private:
+    float length, breadth;
+
 public:
-    void getArea() {
-        int l, b;
-        cout << "Enter length and breadth: ";
-        cin >> l >> b;
-        cout << "Area of rectangle is: " << (l * b) << endl;
+    Rectangle(float l, float b) : length(l), breadth(b) {}
+
+    void draw() override {
+        cout << "Drawing Rectangle with length = " << length
+             << " and breadth = " << breadth << endl;
     }
 };
 
 class Triangle : public Shape {
+private:
+    float base, height;
+
 public:
-    void getArea() {
-        int b, h;
-        cout << "Enter base and height of triangle: ";
-        cin >> b >> h;
-        // Formula: 0.5 * base * height
-        cout << "Area of triangle is: " << (0.5 * b * h) << endl;
+    Triangle(float b, float h) : base(b), height(h) {}
+
+    void draw() override {
+        cout << "Drawing Triangle with base = " << base
+             << " and height = " << height << endl;
     }
 };
 
 int main() {
-    Circle c1;
-    c1.getArea();
+    // Array of base-class pointers demonstrating polymorphism
+    Shape* shapes[3];
+    shapes[0] = new Circle(5.0);
+    shapes[1] = new Rectangle(10.0, 4.0);
+    shapes[2] = new Triangle(6.0, 3.0);
 
-    Rectangle r1;
-    r1.getArea();
+   
+    for (int i = 0; i < 3; i++) {
+        shapes[i]->draw();
+    }
 
-    Triangle t1;
-    t1.getArea();
+    // Clean up
+    for (int i = 0; i < 3; i++) {
+        delete shapes[i];
+    }
 
     return 0;
 }
