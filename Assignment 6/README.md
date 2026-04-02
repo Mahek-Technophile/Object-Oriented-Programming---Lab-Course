@@ -32,86 +32,68 @@ C++ provides the `<fstream>` header for file operations:
 ```cpp
 #include <iostream>
 #include <fstream>
-#include <string>
 using namespace std;
 
 class Student {
-public:
+    //Data members (variables inside class)
     int rollNo;
     string name;
     float marks;
 
-    Student() : rollNo(0), name(""), marks(0.0f) {}
+public:
+    void input(int r, string n, float m) { 
+        //Function to take values and store in object
+        rollNo = r;
+        name = n;
+        marks = m;
+    }
 
-    Student(int r, string n, float m) : rollNo(r), name(n), marks(m) {}
+    void display() {
+        //Function to print student data
+        cout << rollNo << "\t" << name << "\t" << marks << endl;
+    }
 
-    void display() const {
-        cout << "Roll No: " << rollNo
-             << "  Name: " << name
-             << "  Marks: " << marks << endl;
+    void writeToFile(ofstream &fout) {
+        // Function to write data into file | &fout = passed by reference
+        fout << rollNo << " " << name << " " << marks << endl;
+
+        //Writes data into file in the format: rollNo name marks
     }
 };
 
-// Write student records to file
-void writeToFile(const string& filename, Student students[], int size) {
-    ofstream outFile(filename);
-    if (!outFile) {
-        cout << "Error opening file for writing!" << endl;
-        return;
-    }
-
-    for (int i = 0; i < size; i++) {
-        outFile << students[i].rollNo << " "
-                << students[i].name << " "
-                << students[i].marks << "\n";
-    }
-
-    outFile.close();
-    cout << "Data written successfully.\n";
-}
-
-// Read student records from file
-int readFromFile(const string& filename, Student students[]) {
-    ifstream inFile(filename);
-    if (!inFile) {
-        cout << "Error opening file for reading!" << endl;
-        return 0;
-    }
-
-    int count = 0;
-    while (inFile >> students[count].rollNo
-                  >> students[count].name
-                  >> students[count].marks) {
-        count++;
-    }
-
-    inFile.close();
-    return count;
-}
-
 int main() {
-    Student students[10];  // Array (max 10 students)
+    Student s[10];
 
-    // Initialize data
-    students[0] = Student(1, "Alice", 88.5);
-    students[1] = Student(2, "Bob", 76.0);
-    students[2] = Student(3, "Charlie", 92.3);
-    students[3] = Student(4, "Diana", 81.0);
+    ifstream fin;
+    ofstream fout;
 
-    int size = 4;
-    string filename = "students.txt";
+    fin.open("input.txt"); //Opens file for reading
+    fout.open("output.txt"); // Opens file for writing
 
-    // Write to file
-    writeToFile(filename, students, size);
+    if (!fin) {
+        cout << "Error opening file";
+        return 1;
+    }
+
+    int r, i = 0;
+    float m;
+    string n;
 
     // Read from file
-    Student loaded[10];
-    int count = readFromFile(filename, loaded);
-
-    cout << "\nReading student data:\n";
-    for (int i = 0; i < count; i++) {
-        loaded[i].display();
+    while (fin >> r >> n >> m) {  //Automatically stops at end of file
+        s[i].input(r, n, m);
+        i++;
     }
+
+    fin.close();
+
+    // Write + display
+    for (int j = 0; j < i; j++) {
+        s[j].writeToFile(fout);
+        s[j].display();
+    }
+
+    fout.close();
 
     return 0;
 }
